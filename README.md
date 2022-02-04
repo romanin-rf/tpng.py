@@ -20,3 +20,8 @@ t.upload_from_png(ipath="youtube.png") # Convert image from .png to .tpng
 c.print(t.get_image_rich())
 ```
 ![tpng_with_rich]()
+
+## Author
+- Roman Slabicky
+    - [Vkontakte](https://vk.com/romanin2)
+    - [GitHub](https://github.com/romanin-rf)
