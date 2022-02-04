@@ -3,9 +3,9 @@ import setuptools
 
 setuptools.setup(
     name='tpng.py',
-    version='0.1',
+    version='0.1.1',
     description='A special file format for displaying images in the terminal.',
-    keywords='tpng.py tpng',
+    keywords='tpng.py',
     packages=setuptools.find_packages(),
     author_email='semina054@gmail.com',
     url="https://github.com/romanin-rf/tpng.py",
@@ -18,5 +18,5 @@ setuptools.setup(
     ).read(),
     author='ProgrammerFromParlament',
     license='MIT',
-    requires=["pillow>=8.3.2"]
+    requires=["pillow"]
 )
