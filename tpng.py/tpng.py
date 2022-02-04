@@ -1,6 +1,4 @@
 import os
-import json
-import base64
 from collections import namedtuple
 from PIL import Image
 
