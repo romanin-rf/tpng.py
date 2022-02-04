@@ -19,7 +19,7 @@ t.upload_from_png(ipath="youtube.png") # Convert image from .png to .tpng
 
 c.print(t.get_image_rich())
 ```
-![tpng_with_rich]()
+![tpng_with_rich](https://romanin-rf.github.io/tpng.py/data/tpng_with_rich.gif)
 
 ## Author
 - Roman Slabicky
