@@ -106,6 +106,7 @@ class TPNG():
 	
 	def upload_from_png(self, ipath: str, *, progress_adaptive=None) -> bool:
 		image = Image.open(ipath)
+		image = image.convert("RGBA") if (image.mode != "RGBA") else image
 		width, height = image.size
 		pixels = []
 		pixels_wag = 0
