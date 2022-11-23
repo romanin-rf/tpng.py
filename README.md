@@ -17,7 +17,7 @@ import tpng
 from rich.console import Console
 
 c = Console()
-t = tpng.open("image.png")
+t = tpng.TPNG("image.png")
 
 string = t.get_rich_string()
 

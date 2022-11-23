@@ -1,30 +1,57 @@
+from io import BufferedReader, BytesIO
 from PIL import Image
 from .Types import ImageInfo as ImageInfo
 
-class TPNG(Image.Image):
-    def get_info(self): return ImageInfo(self.fp.name if hasattr(self, "fp") else None, self.size, self.info.get("dpi", (0, 0)), self.mode)
-    def __str__(self) -> str: i = self.get_info(); i.__name__ = "TPNG"; return str(i)
-    def __repr__(self) -> str: return self.__str__()
+class TPNG:
+    def __init__(
+        self,
+        fp,
+        mode=None,
+        size=None,
+        *args,
+        **kwargs
+    ) -> None:
+        if isinstance(fp, str):
+            self.image = Image.open(fp, *args, **kwargs)
+        elif isinstance(fp, bytes):
+            self.image = Image.frombytes(mode, size, fp, *args, **kwargs)
+        elif isinstance(fp, BufferedReader):
+            self.image = Image.frombuffer(mode, size, fp, *args, **kwargs)
+        elif isinstance(fp, BytesIO):
+            self.image = Image.frombuffer(mode, size, fp, *args, **kwargs)
+        elif isinstance(fp, Image.Image):
+            self.image = fp
+        else:
+            raise TypeError(f"Type parameter for 'fp' cannot be a '{type(fp)}'")
+        self.image = self.image.convert("RGBA")
+    
+    def resize(self, new_size) -> None:
+        if self.image.size != new_size:
+            self.image = self.image.resize(new_size)
+    
+    def get_info(self):
+        return ImageInfo(self.image.fp.name if hasattr(self, "fp") else None, self.image.size, self.image.info.get("dpi", (-1, -1)), self.image.mode)
+    
     @staticmethod
-    def _tohex(pixel) -> str: return "#"+"".join([hex(i)[2:] for i in pixel])
-    def get_rich_string(self, pixel: str="█") -> str:
-        string, img = "", self.convert("RGB")
+    def to_hex(pixel) -> str: return "#"+"".join([hex(i)[2:] for i in pixel])
+    
+    def get_rich_string(
+        self,
+        pixel="█",
+        error_pixel="?",
+        alpha_pixel=" ",
+        alpha_colours=None
+    ) -> str:
+        string, img, alpha_colours = "", self.image.convert("RGB"), alpha_colours or []
+        alpha_colours = [tuple(i) for i in alpha_colours]
         for y in range(img.size[1]):
             for x in range(img.size[0]):
-                string += f"[{self._tohex(self.getpixel((x, y)))}]{pixel}[/]"
+                try:
+                    if (p:=img.getpixel( (x, y) )) not in alpha_colours:
+                        string += f"[{self.to_hex(p)}]{pixel}[/]"
+                    else:
+                        string += alpha_pixel
+                except:
+                    string += error_pixel
             string += "\n"
         return string
-
-# ! Functions
-def open(*args, **kwargs):
-    return TPNG.frombytes(Image.open(*args, **kwargs).tobytes())
-def frombytes(*args, **kwargs):
-    return TPNG.frombytes(*args, **kwargs)
-def frombuffer(*args, **kwargs):
-    return TPNG.frombytes(Image.frombuffer(*args, **kwargs).tobytes())
-def fromarray(*args, **kwargs):
-    return TPNG.frombytes(Image.fromarray(*args, **kwargs).tobytes())
-def fromqimage(*args, **kwargs):
-    return TPNG.frombytes(Image.fromqimage(*args, **kwargs).tobytes())
-def fromqpixmap(*args, **kwargs):
-    return TPNG.frombytes(Image.fromqpixmap(*args, **kwargs).tobytes())
