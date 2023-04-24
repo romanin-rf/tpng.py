@@ -27,20 +27,13 @@ class TPNG:
         self.use_image = self.image.copy()
     
     @staticmethod
-    def to_hex(pixel) -> str:
-        color = "#"
-        for i in pixel:
-            if len(c:=hex(i)[2:]) < 2:
-                c = "0" + c
-            color += c
-        return color
+    def to_hex(pixel) -> str: return "#"+"".join(hex(i)[2:].rjust(2,"0") for i in pixel)
     
     @property
     def size(self): return self.use_image.size
     
     def resize(self, size: tuple) -> None: self.use_image = self.use_image.resize(size)
     def convert(self, mode: str) -> None: self.use_image = self.use_image.convert(mode)
-    
     def reset(self) -> None: self.use_image = self.image.copy()
     
     def to_rich_image(
