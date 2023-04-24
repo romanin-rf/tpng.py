@@ -1,9 +1,18 @@
 from io import BufferedReader, BytesIO
 from PIL import Image
-from .Types import ImageInfo as ImageInfo
-from typing import Tuple, overload, Iterable, Optional
+from typing import Tuple, overload, Iterable, Literal, List
 
 class TPNG:
+    """
+    A class for converting an image into text.
+    
+    Attributes:
+        image: `~PIL.Image.Image` - Unchangeable attribute storing the original image.
+        use_image: `~PIL.Image.Image` - The image over which changes are being made. It can be overwritten with the original using the ~tpng.TPNG.reset function.
+    """
+    image: Image.Image
+    use_image: Image.Image
+    
     @overload
     def __init__(self, fp: str, *args, **kwargs) -> None: ...
     @overload
@@ -14,14 +23,19 @@ class TPNG:
     def __init__(self, fp: BufferedReader, mode: str, size: Tuple[int, int], *args, **kwargs) -> None: ...
     @overload
     def __init__(self, fp: BytesIO, mode: str, size: Tuple[int, int], *args, **kwargs) -> None: ...
-    def resize(self, new_size: Tuple[int, int]) -> None: ...
-    def get_info(self) -> ImageInfo: ...
+    
     @staticmethod
     def to_hex(pixel: Iterable[int]) -> str: ...
-    def get_rich_string(
+    
+    def resize(self, size: Tuple[int, int]) -> None: ...
+    def convert(self, mode: Literal["RGB", "RGBA", "RGBX", "CMYK", "L", "P", "I"]) -> None: ...
+    
+    def reset(self) -> None: ...
+    
+    def to_rich_image(
         self,
         pixel: str="█",
-        error_pixel="?",
-        alpha_pixel=" ",
-        alpha_colours: Optional[Iterable[Iterable[int]]]=None
+        error_pixel: str="?",
+        alpha_pixel: str=" ",
+        alpha_colors: List[Tuple[int, int, int]]=[]
     ) -> str: ...

@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='tpng.py',
-    version='0.2.1',
+    version='0.2.5',
     description='A special file format for displaying images in the terminal.',
     keywords='tpng.py',
     packages=setuptools.find_packages(),

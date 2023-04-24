@@ -1,6 +1,5 @@
 from io import BufferedReader, BytesIO
 from PIL import Image
-from .Types import ImageInfo as ImageInfo
 
 class TPNG:
     def __init__(
@@ -23,35 +22,44 @@ class TPNG:
             self.image = fp
         else:
             raise TypeError(f"Type parameter for 'fp' cannot be a '{type(fp)}'")
-        self.image = self.image.convert("RGBA")
-    
-    def resize(self, new_size) -> None:
-        if self.image.size != new_size:
-            self.image = self.image.resize(new_size)
-    
-    def get_info(self):
-        return ImageInfo(self.image.fp.name if hasattr(self, "fp") else None, self.image.size, self.image.info.get("dpi", (-1, -1)), self.image.mode)
+        
+        if self.image.mode != "RGB": self.image = self.image.convert("RGB")
+        self.use_image = self.image.copy()
     
     @staticmethod
-    def to_hex(pixel) -> str: return "#"+"".join([hex(i)[2:] for i in pixel])
+    def to_hex(pixel) -> str:
+        color = "#"
+        for i in pixel:
+            if len(c:=hex(i)[2:]) < 2:
+                c = "0" + c
+            color += c
+        return color
     
-    def get_rich_string(
+    @property
+    def size(self): return self.use_image.size
+    
+    def resize(self, size: tuple) -> None: self.use_image = self.use_image.resize(size)
+    def convert(self, mode: str) -> None: self.use_image = self.use_image.convert(mode)
+    
+    def reset(self) -> None: self.use_image = self.image.copy()
+    
+    def to_rich_image(
         self,
-        pixel="█",
-        error_pixel="?",
-        alpha_pixel=" ",
-        alpha_colours=None
+        pixel: str="█",
+        error_pixel: str="?",
+        alpha_pixel: str=" ",
+        alpha_colors: list=[]
     ) -> str:
-        string, img, alpha_colours = "", self.image.convert("RGB"), alpha_colours or []
-        alpha_colours = [tuple(i) for i in alpha_colours]
+        timg = ""
+        img = self.use_image if self.use_image.mode == "RGB" else self.use_image.convert("RGB")
+        
         for y in range(img.size[1]):
             for x in range(img.size[0]):
                 try:
-                    if (p:=img.getpixel( (x, y) )) not in alpha_colours:
-                        string += f"[{self.to_hex(p)}]{pixel}[/]"
-                    else:
-                        string += alpha_pixel
-                except:
-                    string += error_pixel
-            string += "\n"
-        return string
+                    pix = img.getpixel((x, y))
+                    if pix not in alpha_colors: timg += f"[{self.to_hex(pix)}]{pixel}[/]"
+                    else: timg += alpha_pixel
+                except: timg += error_pixel
+            timg += "\n"
+        
+        return timg

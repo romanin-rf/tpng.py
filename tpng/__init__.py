@@ -1,3 +1,1 @@
-from .tpng import (
-    TPNG, ImageInfo
-)
+from .tpng import TPNG
