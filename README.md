@@ -19,7 +19,7 @@ from rich.console import Console
 c = Console()
 t = tpng.TPNG("image.png")
 
-string = t.get_rich_string()
+string = t.to_rich_image()
 
 c.print(string)
 ```
