@@ -24,7 +24,9 @@ string = t.to_rich_image()
 c.print(string)
 ```
 
-<div id="header" align="center"><img src="https://romanin-rf.github.io/tpng.py/data/tpng_with_rich.gif" width="800"></div>
+
+![Новый проект.webm](https://user-images.githubusercontent.com/60302782/235365202-fd944bbc-9605-4bc6-b596-7528ac55b9ed.webm)
+
 
 ## Author
 - Roman Slabicky
